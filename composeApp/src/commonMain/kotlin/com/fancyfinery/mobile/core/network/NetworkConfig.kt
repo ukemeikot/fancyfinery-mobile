@@ -14,10 +14,9 @@ package com.fancyfinery.mobile.core.network
 object NetworkConfig {
 
     /**
-     * The storefront origin — currently STAGING, which is where the app is
-     * being built and tested against.
+     * The storefront origin — currently PRODUCTION.
      *
-     * Production is `https://fancyfinerybup.com`. Switching is this one line,
+     * Staging is `https://app.staging.fancyfinerybup.com`. Switching is this one line,
      * because staging and production are the same application deployed twice
      * (`APP_ENV` tells them apart) and expose an identical API.
      *
@@ -29,7 +28,7 @@ object NetworkConfig {
      * "localhost" — that resolves to the emulator itself. Use `10.0.2.2` on the
      * Android emulator, or the host machine's LAN address on a real device.
      */
-    const val BASE_URL: String = "https://app.staging.fancyfinerybup.com"
+    const val BASE_URL: String = "https://fancyfinerybup.com"
 
     /** Prefix for the app's own endpoints. Versioned, so a breaking change ships as /v2. */
     const val API_PREFIX: String = "/api/mobile/v1"
