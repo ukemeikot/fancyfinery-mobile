@@ -40,8 +40,28 @@ iosApp/.build/
 # Room schemas (keep if you want to track migrations)
 # composeApp/schemas/
 
-# Secrets — never commit
+# Secrets — never commit.
+#
+# This repository is PUBLIC, so anything committed here is permanent and
+# world-readable even if deleted in a later commit. Signing keys and service
+# account files are listed explicitly rather than relying on a glob.
+.env
+.env.*
 *.env
 local.properties
 google-services.json
 GoogleService-Info.plist
+
+# Signing material. A leaked upload key cannot be rotated without publishing a
+# new app listing, so these must never reach a commit.
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+keystore.properties
+signing.properties
+
+# Build scans and crash dumps can embed absolute paths and environment values.
+*.hprof
+*.log

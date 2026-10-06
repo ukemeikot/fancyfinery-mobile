@@ -1,175 +1,110 @@
-# KMP Starter
+# Fancy Finery — Mobile
 
-Kotlin Multiplatform + Compose Multiplatform starter with vertical slice architecture.
+The Fancy Finery storefront as a native app, built with Kotlin Multiplatform and
+Compose Multiplatform.
 
-**Platforms:** Android · iOS · Desktop (JVM) · Web (wasmJs)
+**Targets:** Android · iOS
+(Desktop is kept as a development preview host — see below. It ships nowhere.)
 
-## Quick Start
+## What it does
 
-```bash
-# 1. Clone
-git clone https://github.com/ukemeikot/kmp-starter.git
-cd kmp-starter
+Everything the web storefront does:
 
-# 2. Rename package (optional)
-./rename.sh com.yourcompany.appname
-
-# 3. Replace simulated auth with your real API
-# composeApp/src/commonMain/.../features/auth/data/remote/AuthApi.kt
-
-# 4. Build & run
-./gradlew :androidApp:assembleDebug          # Android APK
-./gradlew :composeApp:wasmJsBrowserRun       # Web (dev server)
-```
+| | |
+|---|---|
+| **Home** | collections, featured, new in, the lookbook edit, recently viewed, customer reviews, Privé Circle |
+| **Shop** | catalogue with debounced search, category filters, paging, pull-to-refresh |
+| **Product** | swipeable gallery, size and colour pickers, size & fit, reviews, save, request another colour |
+| **Bag** | device-local, server-priced |
+| **Checkout** | searchable country picker, Nigerian state/area flat-fee delivery, couriers, discount codes, hosted payment |
+| **Orders** | history, receipt, fulfilment trail, cancel, pay |
+| **Account** | profile, saved address, currency, policies |
+| **Auth** | email + password, Google, one-time sign-in links, password reset |
 
 ## Architecture
 
-Vertical Slice — each feature is fully self-contained:
+Vertical slice — each feature owns its whole stack:
 
 ```
-features/
-  featureName/
-    FeatureNameContract.kt   ← public API (callbacks, shared types)
-    di/FeatureNameModule.kt  ← Koin DI wiring
-    data/                    ← repository, API client, DAO, preferences
-    domain/                  ← use cases, domain models
-    presentation/            ← screens, viewmodels, UI components
+composeApp/src/
+  commonMain/        shared code — put things here by default
+    core/            network, session, database, theme, navigation, platform
+    features/<name>/
+      data/          repository, API client, DAO
+      presentation/  screens, view models, components
+      di/            Koin module
+  androidMain/       Android actuals (Custom Tabs, Credential Manager, Room)
+  iosMain/           iOS actuals (SFSafariViewController, Room)
+  desktopMain/       development preview host only
+androidApp/          thin Android host
+iosApp/              Xcode project linking the shared framework
 ```
 
-### Adding a Feature
+### Two rules worth knowing before changing anything
 
-1. Create `composeApp/src/commonMain/.../features/<name>/` following the structure above
-2. Register the Koin module in `core/di/AppModule.kt`
-3. Add a destination to `core/navigation/Destinations.kt`
-4. Wire the screen in `core/navigation/AppNavigation.kt`
+**Money is never computed on the device.** Catalogue prices are stored in naira
+and converted server-side; every total shown comes from the quote endpoint, and
+checkout sends only product ids, variant ids and quantities. Cached prices in
+the bag exist to draw a row. A tampered local bag changes what the customer
+*sees* and nothing about what they are *charged*.
 
-## Structure
+**Stock is a hint, not a control.** The quantity stepper stops the obvious
+mistake. The real arbitration is a conditional decrement inside the order
+transaction server-side — the only thing that can decide between two customers
+reaching for the last one.
 
-```
-kotlin-starter/
-├── androidApp/          Android application entry point
-├── composeApp/          Shared KMP code (UI + logic + data)
-│   └── src/
-│       ├── commonMain/  Shared across all platforms
-│       ├── androidMain/ Android-specific actuals
-│       ├── iosMain/     iOS-specific actuals
-│       ├── desktopMain/ JVM desktop actuals
-│       └── wasmJsMain/  Web actuals
-├── iosApp/              Xcode project (SwiftUI wrapper)
-└── rename.sh            Package rename helper
-```
+## Running it
 
-## Defaults Included
-
-| Feature    | Details                                                                                                     |
-|------------|-------------------------------------------------------------------------------------------------------------|
-| Onboarding | 3-page horizontal swipe, skip/complete stored in DataStore                                                  |
-| Auth       | Login + Register screens, demo creds `demo@example.com` / `Password1`, swap `AuthApi.kt` for real API |
-| Home       | Scaffold + top bar with logout                                                                              |
-| Theme      | Material 3, light + dark mode, custom color palette                                                         |
-| Navigation | Nav3 with explicit back stack                                                                               |
-
-## Stack
-
-| Layer         | Library                                                                     |
-|---------------|-----------------------------------------------------------------------------|
-| UI            | Compose Multiplatform 1.10.3                                                |
-| DI            | Koin 4.x                                                                    |
-| HTTP          | Ktor 3.4.2                                                                  |
-| HTTP caching  | RetroStash 0.0.7                                                            |
-| Database      | Room 3.x (all platforms)                                                    |
-| Preferences   | `PreferenceStore` — DataStore on Android/iOS/Desktop, `localStorage` on Web |
-| Navigation    | Navigation 3                                                                |
-| Serialization | kotlinx.serialization                                                       |
-
-## iOS Setup
-
-Open `iosApp/iosApp.xcodeproj` in Xcode and run on a simulator or device.
-
-If you renamed the package with `rename.sh`, also update the iOS bundle identifier:
-
-1. Open `iosApp/iosApp.xcodeproj` → select the `iosApp` target
-2. **General → Identity → Bundle Identifier** — set to your new package name
-3. Optionally update the display name under **General → Display Name**
-
-## Agent skills
-
-Agent guidance lives in [`AGENTS.md`](AGENTS.md) and `.claude/skills/`. Claude Code
-picks the skill up automatically; other agents should start from `AGENTS.md`.
-
-| Skill                                | Covers                                                                                    |
-| ------------------------------------ | ------------------------------------------------------------------------------------------ |
-| [`kmp`](.claude/skills/kmp/SKILL.md) | Source sets, expect/actual, Compose Multiplatform, Koin, Ktor, Room, Gradle, the build gate |
-
-The official skills are **installed rather than vendored**, since they track the
-Android Gradle Plugin and Kotlin releases and a frozen copy would go stale:
-
-```sh
-android skills add --all
+```bash
+./gradlew :androidApp:installDebug     # build and install on a connected device
+./dev.sh                               # the same, then relaunch
+./gradlew :composeApp:runHot --auto    # hot-reloading preview, phone-sized window
+./gradlew :composeApp:desktopTest      # shared tests
 ```
 
-- [android/skills](https://github.com/android/skills) (Apache-2.0, Google) —
-  `jetpack-compose`, `build-system`, `performance`, `testing`, `security`,
-  `navigation`
-- [JetBrains/skills](https://github.com/JetBrains/skills) — KMP-relevant entries
-  are `gradle-kotlin-dsl-doctor`, `kotlin-tooling-agp9-migration` and
-  `kotlin-tooling-cocoapods-spm-migration`
+Compose Hot Reload is JVM-only, which is why the desktop target exists: a window
+that redraws on save beats a Gradle install per spacing change. It is a faster
+way to look at the *same shared UI*, not a third platform — touch targets, safe
+areas and real network behaviour still need a device.
 
-**Thanks to the Android and JetBrains teams for publishing these openly.**
+`./gradlew build` attempts the iOS targets, which only link on macOS. On Windows
+and Linux use the targeted tasks above.
+
+### Pointing at a different backend
+
+One line, in `core/network/NetworkConfig.kt`. Staging and production are the
+same application deployed twice and expose an identical API.
+
+### Google sign-in
+
+Uses Credential Manager — the account sheet appears over the app, and the ID
+token it returns is exchanged server-side for a session. No browser.
+
+It needs an **Android OAuth client** registered in the same Google Cloud project
+as the web client, matching the app's `applicationId` and signing certificate.
+Without it Google raises error `28444` and the sheet closes immediately. A
+release build is signed with a different key and needs its own entry.
+
+iOS reports the native flow unavailable and hides the button rather than
+offering one that fails; email, password and the one-time link work there. The
+server already accepts an ID token from any provider, so finishing it is
+client-side only.
 
 ## Security
 
-### Supply-chain scanning
+`tools/supply_chain_scan.sh` runs in CI on every push. A Gradle build executes
+arbitrary Kotlin at configuration time — `build.gradle.kts` is this stack's
+equivalent of an npm `postinstall`, and `gradle-wrapper.jar` runs before Gradle
+itself exists. The scan covers those, Xcode run-script phases, and CI steps that
+fetch remote code.
 
-A self-contained scanner lives at
-[`tools/supply_chain_scan.sh`](tools/supply_chain_scan.sh) and runs in CI on every
-push and pull request:
+Also running: CodeQL, Gitleaks, Gradle wrapper validation, Dependabot.
 
-```sh
-bash tools/supply_chain_scan.sh .
-```
+No secrets live in this repository. The Google client id in the source is an
+OAuth **client id**, which is public by design and already served by the
+website to any anonymous caller; the client *secret* is server-side only.
 
-A Gradle build executes arbitrary Kotlin at **configuration time**, before any
-task runs, which makes `build.gradle.kts` and `settings.gradle.kts` this stack's
-equivalent of an npm `postinstall` script. `gradle-wrapper.jar` runs even earlier
-— before Gradle itself has been downloaded. Xcode run-script phases and the
-webpack config injected into the wasmJs build round out the surface. All of them
-execute on a normal build and none are read closely during review.
+## Credits
 
-The scan verifies the Gradle wrapper (stock jar contents, HTTPS official
-distribution URL, `distributionSha256Sum` pinned), that Maven repositories stay
-on trusted hosts with no plaintext HTTP, that build files are not oversized or
-whitespace-padded, that they contain no process execution or network access, that
-`project.pbxproj` has no injected run-script phases, that the wasm-target
-JavaScript carries no obfuscation or blockchain-C2 patterns, and that no CI step
-downloads and runs remote code.
-
-It is deliberately vendored rather than downloaded at scan time — fetching a
-scanner over the network would reintroduce exactly the class of dependency it
-exists to catch.
-
-### Other checks
-
-| Check                     | Runs on                   |
-| ------------------------- | ------------------------- |
-| CodeQL (`java-kotlin`)    | push, PR, weekly schedule |
-| Gitleaks                  | push, PR, weekly schedule |
-| Gradle Wrapper Validation | push, PR, weekly schedule |
-| Dependabot (gradle, actions, npm) | weekly            |
-
-`gradle-wrapper.properties` pins the Gradle distribution by SHA-256. Update that
-hash from <https://gradle.org/release-checksums/> whenever you bump Gradle.
-
-## Known constraints
-
-- `org.jetbrains.compose.material3:material3` publishes **no stable release** —
-  only alphas exist. The alpha pin in `gradle/libs.versions.toml` is deliberate.
-  `room` and `sqlite` are alpha for the same reason.
-- The Gradle daemon requires **JDK 21** (`gradle/gradle-daemon-jvm.properties`).
-  Gradle auto-provisions it when the local JDK is older.
-- `./gradlew build` attempts the iOS targets, which only link on macOS. On
-  Windows and Linux use `:composeApp:desktopTest` and `:androidApp:assembleDebug`.
-
-## License
-
-MIT
+Started from [ukemeikot/kmp-starter](https://github.com/ukemeikot/kmp-starter)
+(MIT).
