@@ -1,0 +1,18 @@
+* text=auto eol=lf
+
+# Shell scripts must stay LF: CRLF breaks the shebang on Linux CI runners.
+# gradlew has no extension, so it needs an explicit rule.
+*.sh text eol=lf
+gradlew text eol=lf
+
+# Windows batch files need CRLF.
+*.bat text eol=crlf
+
+# Never normalise binaries.
+*.jar binary
+*.png binary
+*.jpg binary
+*.ico binary
+*.xcuserstate binary
+*.keystore binary
+*.jks binary

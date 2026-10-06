@@ -1,0 +1,47 @@
+# Gradle
+.gradle/
+build/
+**/build/
+*.hprof
+local.properties
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+captures/
+
+# Kotlin
+*.class
+*.kotlin_module
+.kotlin
+
+# Android
+/androidApp/release/
+*.apk
+*.aab
+*.dex
+proguard/
+
+# iOS
+iosApp/iosApp.xcworkspace/
+iosApp/Pods/
+iosApp/DerivedData/
+**/xcuserdata/
+*.xcuserstate
+iosApp/.build/
+
+# macOS
+.DS_Store
+*.DS_Store
+
+# Room schemas (keep if you want to track migrations)
+# composeApp/schemas/
+
+# Secrets — never commit
+*.env
+local.properties
+google-services.json
+GoogleService-Info.plist

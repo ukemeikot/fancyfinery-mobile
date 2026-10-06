@@ -1,0 +1,85 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: java-kotlin
+          queries: security-and-quality
+
+      # CodeQL needs a real compilation of the Kotlin sources to build its
+      # database, so the Android variant is assembled here rather than autobuilt.
+      - name: Build for analysis
+        run: ./gradlew :androidApp:assembleDebug --stacktrace
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: '/language:java-kotlin'
+
+  gitleaks:
+    name: Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  supply-chain-scan:
+    name: Supply-chain Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      # The scanner is vendored in this repo on purpose. Fetching a scanner over
+      # the network at scan time would reintroduce the exact class of dependency
+      # this check exists to catch.
+      - name: Run supply-chain scan
+        run: bash tools/supply_chain_scan.sh "${{ github.workspace }}"
+
+  gradle-wrapper:
+    name: Gradle Wrapper Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # Verifies gradle-wrapper.jar against the checksums Gradle publishes for
+      # every release. The wrapper jar runs before Gradle itself exists, so a
+      # tampered one executes with nothing having validated it.
+      - name: Validate wrapper
+        uses: gradle/actions/wrapper-validation@v4

@@ -1,0 +1,123 @@
+[versions]
+# Build toolchain
+agp = "9.1.0"
+kotlin = "2.3.20"
+
+# Compose / UI
+compose-multiplatform = "1.10.3"
+lifecycle = "2.10.0"
+
+# Networking
+ktor = "3.4.2"
+retrostash = "0.0.7"
+coil = "3.3.0"
+
+# Database / Storage
+room = "3.0.0-alpha03"
+sqlite = "2.7.0-alpha03"
+
+# DI
+koin = "4.1.0"
+
+# Kotlinx
+coroutines = "1.10.2"
+
+[libraries]
+# Compose Multiplatform — explicit module coordinates (compose.* accessors deprecated)
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version = "1.10.0-alpha05" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
+compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
+compose-material-icons = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
+
+# Navigation 3
+navigation = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version = "1.1.0" }
+
+# Lifecycle
+activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.13.0" }
+lifecycle-runtime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+
+# Ktor
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# RetroStash
+retrostash-core = { group = "dev.logickoder", name = "retrostash-core", version.ref = "retrostash" }
+retrostash-ktor = { group = "dev.logickoder", name = "retrostash-ktor", version.ref = "retrostash" }
+
+# Coil 3 — Compose Multiplatform image loading, over the shared Ktor engine
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
+
+# Room 3.x KMP
+room-runtime = { group = "androidx.room3", name = "room3-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room3", name = "room3-compiler", version.ref = "room" }
+room-sqlite = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+room-sqlite-web = { module = "androidx.sqlite:sqlite-web", version.ref = "sqlite" }
+
+# DataStore
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version = "1.2.1" }
+
+# Koin
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
+
+# Kotlinx
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.11.0" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version = "0.7.1" }
+
+# Android platform
+core = "androidx.core:core-ktx:1.18.0"
+# Chrome Custom Tabs — hosts the Paystack/Stripe payment page in-app. A WebView
+# would work, but card forms in a WebView are exactly what payment providers and
+# app-store reviewers object to; a Custom Tab keeps the real browser's address
+# bar and TLS indicator in front of the customer.
+androidx-browser = { group = "androidx.browser", name = "browser", version = "1.9.0" }
+
+# Testing
+junit = { group = "junit", name = "junit", version = "4.13.2" }
+runner = { group = "androidx.test", name = "runner", version = "1.7.0" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.7.0" }
+
+[plugins]
+# Android
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-kmp-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+
+# Kotlin
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+# Compose
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+# Hot reload for the desktop PREVIEW host. Development tooling: it affects no
+# Android or iOS build, and nothing it provides reaches a shipped binary.
+#
+# Deliberately VERSIONLESS. The Compose Multiplatform plugin already puts
+# hot-reload on the build classpath, so naming a version here fails with
+# "already on the classpath with an unknown version" — Gradle cannot reconcile a
+# requested version against one it did not resolve. Taking the version Compose
+# ships is also the correct choice on its own terms: the two are released
+# together and a mismatched pair breaks the compiler plugin.
+compose-hot-reload = { id = "org.jetbrains.compose.hot-reload" }
+
+# Room / KSP
+ksp = { id = "com.google.devtools.ksp", version = "2.3.7" }
+room = { id = "androidx.room3", version.ref = "room" }

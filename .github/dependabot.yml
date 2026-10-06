@@ -1,0 +1,33 @@
+version: 2
+
+updates:
+  # Gradle version catalog (gradle/libs.versions.toml) plus the build files.
+  - package-ecosystem: 'gradle'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    groups:
+      kotlin-and-compose:
+        patterns:
+          - 'org.jetbrains.kotlin*'
+          - 'org.jetbrains.compose*'
+          - 'androidx.compose*'
+      androidx:
+        patterns:
+          - 'androidx.*'
+        exclude-patterns:
+          - 'androidx.compose*'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+
+  # npm packages pulled in for the wasmJs target's sqlite worker.
+  - package-ecosystem: 'npm'
+    directory: '/composeApp/worker'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5

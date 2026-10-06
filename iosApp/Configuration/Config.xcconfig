@@ -1,0 +1,9 @@
+// Set TEAM_ID to your Apple Developer Team ID. The Xcode project consumes it as
+// DEVELOPMENT_TEAM; it must not appear in the bundle identifier.
+TEAM_ID=
+
+PRODUCT_NAME=KMP Starter
+PRODUCT_BUNDLE_IDENTIFIER=com.fancyfinery.mobile
+
+CURRENT_PROJECT_VERSION=1
+MARKETING_VERSION=1.0
