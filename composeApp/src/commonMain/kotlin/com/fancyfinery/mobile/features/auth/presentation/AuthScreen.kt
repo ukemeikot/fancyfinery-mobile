@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fancyfinery.mobile.core.theme.BrandWordmark
+import com.fancyfinery.mobile.core.ui.GoogleLogo
 import com.fancyfinery.mobile.features.auth.AuthMode
 import com.fancyfinery.mobile.features.auth.OnAuthSuccess
 import com.fancyfinery.mobile.features.auth.presentation.components.AuthTextField
@@ -224,6 +225,11 @@ fun AuthScreen(
                 if (state.isGoogleLoading) {
                     CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
                 } else {
+                    // Google's own mark, as their branding requires — a generic
+                    // icon or a letter G in our colours is not acceptable here,
+                    // and is something app review checks.
+                    GoogleLogo(modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.size(12.dp))
                     Text("Continue with Google")
                 }
             }
