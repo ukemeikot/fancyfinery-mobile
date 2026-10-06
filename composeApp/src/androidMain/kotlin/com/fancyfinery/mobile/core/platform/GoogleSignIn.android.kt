@@ -87,10 +87,17 @@ private class AndroidGoogleSignIn(private val activity: Activity) : GoogleSignIn
         } catch (e: GetCredentialCancellationException) {
             Attempt.Cancelled
         } catch (e: NoCredentialException) {
-            Attempt.Unavailable(
-                "No Google account is available on this device. Add one in " +
-                    "Settings, or sign in with your email instead.",
-            )
+            // NOT necessarily "no account on this device".
+            //
+            // Google throws NoCredentialException for a developer-configuration
+            // failure too — error 28444, "Developer console is not set up
+            // correctly", raised when the Android OAuth client does not match
+            // this package name and signing certificate. Reporting that as "no
+            // Google account available" sends everyone hunting for a missing
+            // account that is sitting right there, which is exactly what it
+            // did. The message is decided by what the exception actually says.
+            Log.w(TAG, "No credential (filtered=$filterByAuthorizedAccounts)", e)
+            Attempt.Unavailable(explain(e))
         } catch (e: GetCredentialException) {
             // The common cause in a fresh project is the Android OAuth client
             // not being registered for this package and signing certificate —
@@ -110,16 +117,35 @@ private class AndroidGoogleSignIn(private val activity: Activity) : GoogleSignIn
      * needs to recognise immediately.
      */
     private fun explain(e: GetCredentialException): String {
-        val detail = e.errorMessage?.toString().orEmpty() + " " + (e.message ?: "")
+        val detail = buildString {
+            append(e.errorMessage ?: "")
+            append(' ')
+            append(e.message ?: "")
+            append(' ')
+            append(e.type)
+        }
+
         return when {
+            // The configuration failure, by its own signature. Named plainly
+            // because no customer can act on it and every tester needs to
+            // recognise it instantly.
             detail.contains("28444") ||
                 detail.contains("Developer console", ignoreCase = true) ||
+                detail.contains("not registered", ignoreCase = true) ||
                 detail.contains("not set up", ignoreCase = true) ->
-                "Google sign-in isn't configured for this build yet. " +
-                    "Use your email to sign in for now."
+                "Google sign-in isn't set up for this build yet (the app isn't " +
+                    "registered with Google). Sign in with your email for now."
 
-            detail.contains("network", ignoreCase = true) ->
+            detail.contains("network", ignoreCase = true) ||
+                detail.contains("timeout", ignoreCase = true) ->
                 "Couldn't reach Google. Check your connection and try again."
+
+            // Genuinely nothing on the device — the case the old message
+            // assumed was the only one.
+            detail.contains("no credentials available", ignoreCase = true) ||
+                detail.contains("no matching credential", ignoreCase = true) ->
+                "No Google account on this device. Add one in Settings, or " +
+                    "sign in with your email."
 
             else -> "Google sign-in isn't available right now. " +
                 "You can sign in with your email instead."
