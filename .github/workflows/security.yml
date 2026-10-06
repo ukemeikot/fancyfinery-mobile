@@ -22,7 +22,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -50,7 +50,7 @@ jobs:
     name: Gitleaks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # The scanner is vendored in this repo on purpose. Fetching a scanner over
       # the network at scan time would reintroduce the exact class of dependency
@@ -76,7 +76,7 @@ jobs:
     name: Gradle Wrapper Validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Verifies gradle-wrapper.jar against the checksums Gradle publishes for
       # every release. The wrapper jar runs before Gradle itself exists, so a
