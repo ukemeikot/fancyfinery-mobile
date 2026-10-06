@@ -4,93 +4,109 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-// Brand palette
-val Primary = Color(0xFF6650A4)
-val OnPrimary = Color(0xFFFFFFFF)
-val PrimaryContainer = Color(0xFFEADDFF)
-val OnPrimaryContainer = Color(0xFF21005E)
+/**
+ * The Fancy Finery palette, taken from the storefront rather than invented.
+ *
+ * The house reads as near-black and gold: `--foreground: #171717` on white, and
+ * a wordmark that runs a four-stop gradient from pale champagne through to dark
+ * bronze. Those exact stops are kept below, because the app sits beside the
+ * website in a customer's memory and a different gold reads as a different
+ * brand — or worse, as a counterfeit.
+ *
+ * Material 3 wants a `primary` that carries interactive weight. Gold is the
+ * brand colour but it is a poor primary: `#eab308` on white is roughly 2:1
+ * contrast, which fails WCAG AA for text and for button labels. So the
+ * near-black is primary (buttons, links, anything that must be read) and gold
+ * is `tertiary` — used for the wordmark, accents, rating stars and price
+ * emphasis, where it decorates rather than carries meaning.
+ */
 
-val Secondary = Color(0xFF625B71)
-val OnSecondary = Color(0xFFFFFFFF)
-val SecondaryContainer = Color(0xFFE8DEF8)
-val OnSecondaryContainer = Color(0xFF1E192B)
+// --- Brand constants -------------------------------------------------------
 
-val Tertiary = Color(0xFF7D5260)
-val OnTertiary = Color(0xFFFFFFFF)
-val TertiaryContainer = Color(0xFFFFD8E4)
-val OnTertiaryContainer = Color(0xFF370B1E)
+/** The wordmark gradient, light to dark. Use for text brushes, not fills. */
+val GoldChampagne = Color(0xFFFDE68A)
+val GoldLight = Color(0xFFF0C245)
+val Gold = Color(0xFFEAB308)
+val GoldDeep = Color(0xFFA9791B)
 
-val Error = Color(0xFFB3261E)
-val OnError = Color(0xFFFFFFFF)
-val ErrorContainer = Color(0xFFF9DEDC)
-val OnErrorContainer = Color(0xFF370606)
+/** `--foreground` on the website. Near-black, not pure black: softer on OLED. */
+val Ink = Color(0xFF171717)
+val InkSoft = Color(0xFF4A4A4A)
+val Paper = Color(0xFFFFFFFF)
+val PaperWarm = Color(0xFFFAF8F5)
 
-// Light scheme
-val LightBackground = Color(0xFFFFFBFE)
-val LightOnBackground = Color(0xFF1C1B1F)
-val LightSurface = Color(0xFFFFFBFE)
-val LightOnSurface = Color(0xFF1C1B1F)
-val LightSurfaceVariant = Color(0xFFE7E0EC)
-val LightOnSurfaceVariant = Color(0xFF49454E)
-val LightOutline = Color(0xFF7A757F)
+/** The dark ground the website's header and footer sit on. */
+val Obsidian = Color(0xFF0A0A0A)
+val ObsidianRaised = Color(0xFF161616)
 
-// Dark scheme
-val DarkBackground = Color(0xFF1C1B1F)
-val DarkOnBackground = Color(0xFFE6E1E5)
-val DarkSurface = Color(0xFF1C1B1F)
-val DarkOnSurface = Color(0xFFE6E1E5)
-val DarkSurfaceVariant = Color(0xFF49454E)
-val DarkOnSurfaceVariant = Color(0xFFCAC4D0)
-val DarkOutline = Color(0xFF948F99)
+private val Danger = Color(0xFFB3261E)
+private val DangerDark = Color(0xFFF2B8B5)
 
 val LightColorScheme = lightColorScheme(
-    primary = Primary,
-    onPrimary = OnPrimary,
-    primaryContainer = PrimaryContainer,
-    onPrimaryContainer = OnPrimaryContainer,
-    secondary = Secondary,
-    onSecondary = OnSecondary,
-    secondaryContainer = SecondaryContainer,
-    onSecondaryContainer = OnSecondaryContainer,
-    tertiary = Tertiary,
-    onTertiary = OnTertiary,
-    tertiaryContainer = TertiaryContainer,
-    onTertiaryContainer = OnTertiaryContainer,
-    error = Error,
-    onError = OnError,
-    errorContainer = ErrorContainer,
-    onErrorContainer = OnErrorContainer,
-    background = LightBackground,
-    onBackground = LightOnBackground,
-    surface = LightSurface,
-    onSurface = LightOnSurface,
-    surfaceVariant = LightSurfaceVariant,
-    onSurfaceVariant = LightOnSurfaceVariant,
-    outline = LightOutline,
+    // Near-black carries every action, so labels stay legible.
+    primary = Ink,
+    onPrimary = Paper,
+    primaryContainer = Color(0xFFE8E4DE),
+    onPrimaryContainer = Ink,
+
+    secondary = InkSoft,
+    onSecondary = Paper,
+    secondaryContainer = Color(0xFFEFEBE5),
+    onSecondaryContainer = Ink,
+
+    // Gold lives here: accents and emphasis, never load-bearing text.
+    tertiary = GoldDeep,
+    onTertiary = Paper,
+    tertiaryContainer = Color(0xFFFBF0D0),
+    onTertiaryContainer = Color(0xFF3D2B06),
+
+    error = Danger,
+    onError = Paper,
+    errorContainer = Color(0xFFF9DEDC),
+    onErrorContainer = Color(0xFF370606),
+
+    background = Paper,
+    onBackground = Ink,
+    surface = Paper,
+    onSurface = Ink,
+    // Warm rather than grey — a boutique ground, not a dashboard one.
+    surfaceVariant = PaperWarm,
+    onSurfaceVariant = Color(0xFF55514B),
+    outline = Color(0xFFB9B3AA),
+    outlineVariant = Color(0xFFE4DFD7),
+    scrim = Color(0xFF000000),
 )
 
 val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFFCFBCFF),
-    onPrimary = Color(0xFF371E73),
-    primaryContainer = Color(0xFF4F378A),
-    onPrimaryContainer = PrimaryContainer,
-    secondary = Color(0xFFCBC2DB),
-    onSecondary = Color(0xFF332D41),
-    secondaryContainer = Color(0xFF4A4458),
-    onSecondaryContainer = SecondaryContainer,
-    tertiary = Color(0xFFEFB8C8),
-    onTertiary = Color(0xFF4A2532),
-    tertiaryContainer = Color(0xFF633B48),
-    onTertiaryContainer = TertiaryContainer,
-    error = Color(0xFFF2B8B5),
+    // Inverted: on a dark ground the light tone is what carries actions.
+    primary = Color(0xFFF2EFEA),
+    onPrimary = Obsidian,
+    primaryContainer = Color(0xFF2A2A2A),
+    onPrimaryContainer = Color(0xFFF2EFEA),
+
+    secondary = Color(0xFFCFC9C1),
+    onSecondary = Color(0xFF2A2A2A),
+    secondaryContainer = Color(0xFF353535),
+    onSecondaryContainer = Color(0xFFEDE9E3),
+
+    // Gold gains contrast on dark, so the brighter stop is usable here.
+    tertiary = Gold,
+    onTertiary = Color(0xFF2B1F02),
+    tertiaryContainer = Color(0xFF4A3708),
+    onTertiaryContainer = GoldChampagne,
+
+    error = DangerDark,
     onError = Color(0xFF601410),
     errorContainer = Color(0xFF8C1D18),
-    onErrorContainer = ErrorContainer,
-    background = DarkBackground,
-    onBackground = DarkOnBackground,
-    surface = DarkSurface,
-    onSurface = DarkOnSurface,
-    surfaceVariant = DarkSurfaceVariant,
-    onSurfaceVariant = DarkOnSurfaceVariant,
-    outline = DarkOutline,
+    onErrorContainer = Color(0xFFF9DEDC),
+
+    background = Obsidian,
+    onBackground = Color(0xFFEDE9E3),
+    surface = Obsidian,
+    onSurface = Color(0xFFEDE9E3),
+    surfaceVariant = ObsidianRaised,
+    onSurfaceVariant = Color(0xFFB5AFA6),
+    outline = Color(0xFF6E6862),
+    outlineVariant = Color(0xFF2E2B27),
+    scrim = Color(0xFF000000),
 )

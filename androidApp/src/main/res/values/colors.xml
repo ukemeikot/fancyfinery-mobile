@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mirrors Obsidian in core/theme/Color.kt. Kept in sync by hand: the
+         window background is drawn by the platform before Compose exists, so
+         it cannot read the Compose palette. -->
+    <color name="brand_obsidian">#0A0A0A</color>
+</resources>

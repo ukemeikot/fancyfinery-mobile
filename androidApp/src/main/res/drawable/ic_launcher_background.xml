@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#4CAF50" />
+<!--
+  The icon's ground. A flat Obsidian fill rather than artwork, because the
+  adaptive-icon background layer is what the launcher parallaxes and masks —
+  anything with detail in it reads as a mistake once it moves.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#0A0A0A" />
 </shape>

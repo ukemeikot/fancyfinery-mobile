@@ -5,6 +5,7 @@ import com.fancyfinery.mobile.core.database.AppDatabase
 import com.fancyfinery.mobile.core.database.createDatabase
 import com.fancyfinery.mobile.core.network.PreferenceRetrostashStore
 import com.fancyfinery.mobile.core.network.createHttpClient
+import com.fancyfinery.mobile.core.platform.createUrlOpener
 import com.fancyfinery.mobile.core.session.SessionStore
 import io.ktor.client.engine.HttpClientEngine
 import org.koin.core.module.Module
@@ -25,6 +26,9 @@ fun coreModule(context: Any?): Module = module {
     single { SessionStore(get()) }
     single { createHttpClient(get(), get(), get()) }
     single<HttpClientEngine> { platformHttpEngine() }
+    // Needs the Android Context, so it is built from the same `context` the
+    // database and preferences are.
+    single { createUrlOpener(context) }
 }
 
 expect fun platformHttpEngine(): HttpClientEngine

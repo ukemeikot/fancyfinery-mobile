@@ -10,7 +10,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 fun authModule(): Module = module {
-    singleOf(::AuthApi)
+    single { AuthApi(get()) }
     singleOf(::AuthRepository)
     viewModel { params ->
         AuthViewModel(
