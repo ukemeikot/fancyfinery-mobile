@@ -12,6 +12,7 @@ import coil3.network.ktor3.KtorNetworkFetcherFactory
 import com.fancyfinery.mobile.core.di.appDeclaration
 import com.fancyfinery.mobile.core.navigation.AppDestination
 import com.fancyfinery.mobile.core.navigation.AppNavigation
+import com.fancyfinery.mobile.core.navigation.DeepLink
 import com.fancyfinery.mobile.core.session.SessionStore
 import com.fancyfinery.mobile.core.theme.AppTheme
 import com.fancyfinery.mobile.features.onboarding.data.OnboardingRepository
@@ -20,7 +21,7 @@ import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 
 @Composable
-fun App(context: Any? = null) {
+fun App(context: Any? = null, deepLink: String? = null) {
     KoinApplication(
         application = appDeclaration(context = context),
         content = {
@@ -34,13 +35,13 @@ fun App(context: Any? = null) {
                     .build()
             }
 
-            AppTheme { Content() }
+            AppTheme { Content(deepLink = deepLink) }
         },
     )
 }
 
 @Composable
-private fun Content() {
+private fun Content(deepLink: String?) {
     val session = koinInject<SessionStore>()
     val onboarding = koinInject<OnboardingRepository>()
     var startDestination by remember { mutableStateOf<AppDestination?>(null) }
@@ -50,6 +51,19 @@ private fun Content() {
         // the bearer token in memory by the time anything requests. Doing this
         // lazily would send the opening catalogue call out unauthenticated.
         session.load()
+
+        // A deep link wins over everything, including onboarding. Someone who
+        // followed a password-reset link from their inbox wants the reset form,
+        // not an introduction to the house — and the token in that link expires.
+        val linked = DeepLink.parse(deepLink)
+        if (linked != null) {
+            startDestination = when (linked) {
+                is DeepLink.ResetPassword -> AppDestination.ResetPassword(linked.token)
+                is DeepLink.Product -> AppDestination.Product(linked.slug)
+                is DeepLink.Order -> AppDestination.Order(linked.orderId)
+            }
+            return@LaunchedEffect
+        }
 
         startDestination = if (onboarding.hasCompletedOnboarding()) {
             // The arrival sequence, then straight to the shop — signed in or

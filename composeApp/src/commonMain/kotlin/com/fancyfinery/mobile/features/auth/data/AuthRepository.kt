@@ -65,8 +65,16 @@ class AuthRepository(
     suspend fun forgotPassword(email: String) =
         api.forgotPassword(
             email = email.trim(),
+            // Points at the website's /reset-password, which is also the
+            // app's App Link. Android hands a verified link to the app when it
+            // is installed and to the browser when it is not, so ONE url serves
+            // both without the email having to know which.
             redirectTo = "${NetworkConfig.BASE_URL}/reset-password",
         )
+
+    /** Finish a reset started from the emailed link. */
+    suspend fun resetPassword(token: String, newPassword: String) =
+        api.resetPassword(token = token, newPassword = newPassword)
 
     /** Re-send the address-confirmation email. */
     suspend fun resendVerification(email: String) =

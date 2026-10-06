@@ -75,6 +75,12 @@ private fun shopModule() = module {
         )
     }
     viewModel { params ->
+        com.fancyfinery.mobile.features.auth.presentation.ResetPasswordViewModel(
+            token = params.get(),
+            repository = get(),
+        )
+    }
+    viewModel { params ->
         OrderDetailViewModel(
             orderId = params.get(),
             account = get(),

@@ -25,6 +25,7 @@ import com.fancyfinery.mobile.features.account.presentation.AccountScreen
 import com.fancyfinery.mobile.features.account.presentation.OrderDetailScreen
 import com.fancyfinery.mobile.features.account.presentation.OrderDetailViewModel
 import com.fancyfinery.mobile.features.auth.presentation.AuthScreen
+import com.fancyfinery.mobile.features.auth.presentation.ResetPasswordScreen
 import com.fancyfinery.mobile.features.cart.data.CartRepository
 import com.fancyfinery.mobile.features.catalog.presentation.CatalogScreen
 import com.fancyfinery.mobile.features.checkout.presentation.CheckoutOutcome
@@ -244,6 +245,14 @@ fun AppNavigation(startDestination: AppDestination) {
                         },
                         onPay = { _, url -> urlOpener.open(url) },
                         viewModel = viewModel,
+                    )
+                }
+
+                entry<AppDestination.ResetPassword> { destination ->
+                    ResetPasswordScreen(
+                        token = destination.token,
+                        onDone = { replaceAll(AppDestination.Auth()) },
+                        onCancel = { replaceAll(AppDestination.Home) },
                     )
                 }
 

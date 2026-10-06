@@ -41,6 +41,13 @@ data class MagicLinkRequest(
     val callbackURL: String,
 )
 
+/** Completing a reset: the emailed token plus the new password. */
+@Serializable
+data class ResetPasswordRequest(
+    val token: String,
+    val newPassword: String,
+)
+
 @Serializable
 data class ForgotPasswordRequest(
     val email: String,

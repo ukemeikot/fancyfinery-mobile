@@ -13,10 +13,55 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+              App Links for the storefront's own https URLs.
+
+              `autoVerify` makes Android fetch /.well-known/assetlinks.json from
+              each host and check this app's signing certificate against it. Only
+              when that succeeds does the system hand the link straight to the
+              app; until then the same links open in the browser, which is the
+              correct fallback rather than a failure.
+
+              https rather than a custom fancyfinery:// scheme, deliberately. One
+              link has to work for everybody: a custom scheme in a password-reset
+              email is a dead string for anyone without the app installed, and
+              people resetting a password on a borrowed laptop are exactly the
+              ones who do not have it. An https App Link reaches the app when it
+              is there and the website when it is not, and the email never has to
+              know which.
+
+              Both hosts are listed so a build pointed at staging still opens
+              production links and vice versa — the alternative is a link that
+              silently does nothing for a tester.
+
+              singleTask above matters here: without it, each link would start a
+              new copy of the activity on top of the old one.
+            -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="fancyfinerybup.com" />
+                <data android:host="app.staging.fancyfinerybup.com" />
+
+                <!--
+                  Scoped to the paths the app actually handles. Claiming the
+                  whole host would make the app intercept every link to the
+                  storefront, including pages it has no screen for.
+                -->
+                <data android:pathPrefix="/reset-password" />
+                <data android:pathPrefix="/products/" />
+                <data android:pathPrefix="/account/orders/" />
             </intent-filter>
         </activity>
     </application>

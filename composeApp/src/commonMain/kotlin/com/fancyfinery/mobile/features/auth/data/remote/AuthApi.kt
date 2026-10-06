@@ -9,6 +9,7 @@ import com.fancyfinery.mobile.features.auth.data.remote.dto.ForgotPasswordReques
 import com.fancyfinery.mobile.features.auth.data.remote.dto.GoogleIdTokenPayload
 import com.fancyfinery.mobile.features.auth.data.remote.dto.GoogleIdTokenSignInRequest
 import com.fancyfinery.mobile.features.auth.data.remote.dto.MagicLinkRequest
+import com.fancyfinery.mobile.features.auth.data.remote.dto.ResetPasswordRequest
 import com.fancyfinery.mobile.features.auth.data.remote.dto.SessionResponse
 import com.fancyfinery.mobile.features.auth.data.remote.dto.SignInRequest
 import com.fancyfinery.mobile.features.auth.data.remote.dto.SignUpRequest
@@ -72,6 +73,17 @@ class AuthApi(
     /** Send a password-reset link. */
     suspend fun forgotPassword(email: String, redirectTo: String) {
         call("/forget-password", ForgotPasswordRequest(email = email, redirectTo = redirectTo))
+    }
+
+    /**
+     * Complete a password reset using the token from the emailed link.
+     *
+     * The token IS the credential — Better Auth minted it, emailed it, and
+     * verifies it here. No session exists at this point and none is expected;
+     * the customer has, by definition, forgotten how to make one.
+     */
+    suspend fun resetPassword(token: String, newPassword: String) {
+        call("/reset-password", ResetPasswordRequest(token = token, newPassword = newPassword))
     }
 
     /** Re-send the address-confirmation email. */

@@ -61,6 +61,10 @@ sealed class AppDestination {
     @Serializable
     data class Order(val orderId: String) : AppDestination()
 
+    /** Reached from the emailed reset link. The token is the credential. */
+    @Serializable
+    data class ResetPassword(val token: String) : AppDestination()
+
     /** About / Contact / Shipping / Privacy / Terms, by title. */
     @Serializable
     data class Policy(val title: String) : AppDestination()
