@@ -82,4 +82,4 @@ jobs:
       # every release. The wrapper jar runs before Gradle itself exists, so a
       # tampered one executes with nothing having validated it.
       - name: Validate wrapper
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v6
