@@ -70,9 +70,21 @@ class AuthApi(
         call("/sign-in/magic-link", MagicLinkRequest(email = email, callbackURL = callbackUrl))
     }
 
-    /** Send a password-reset link. */
+    /**
+     * Send a password-reset link.
+     *
+     * The path is `/request-password-reset`. Better Auth's older
+     * `/forget-password` alias no longer exists in this version and answers
+     * 404 — which surfaced as the button appearing to do nothing at all.
+     * Endpoint paths here are part of a dependency's public API, not ours, so
+     * they are worth checking against a running server after an upgrade rather
+     * than assuming.
+     */
     suspend fun forgotPassword(email: String, redirectTo: String) {
-        call("/forget-password", ForgotPasswordRequest(email = email, redirectTo = redirectTo))
+        call(
+            "/request-password-reset",
+            ForgotPasswordRequest(email = email, redirectTo = redirectTo),
+        )
     }
 
     /**

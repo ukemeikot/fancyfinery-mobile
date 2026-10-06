@@ -1,5 +1,7 @@
 package com.fancyfinery.mobile.features.auth.presentation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fancyfinery.mobile.core.theme.BrandWordmark
+import com.fancyfinery.mobile.core.theme.Gold
 import com.fancyfinery.mobile.core.ui.GoogleLogo
 import com.fancyfinery.mobile.features.auth.AuthMode
 import com.fancyfinery.mobile.features.auth.OnAuthSuccess
@@ -81,16 +84,29 @@ fun AuthScreen(
         Spacer(Modifier.height(20.dp))
 
         // "We've emailed you" — a success that is not a sign-in.
+        //
+        // Drawn as a bordered card rather than a line of text. These three
+        // actions (create an account, email me a link, reset my password) all
+        // end with nothing visibly changing on screen, so the confirmation is
+        // the ONLY evidence anything happened — and a tinted sentence between
+        // two headings is easy to miss, especially with the keyboard up.
         state.notice?.let { notice ->
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = 16.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Gold.copy(alpha = 0.45f),
+                        shape = RoundedCornerShape(2.dp),
+                    )
+                    .background(Gold.copy(alpha = 0.08f))
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
             ) {
                 Text(
                     text = notice,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                 )
