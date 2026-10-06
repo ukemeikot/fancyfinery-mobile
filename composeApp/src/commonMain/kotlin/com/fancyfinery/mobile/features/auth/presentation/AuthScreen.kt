@@ -31,13 +31,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fancyfinery.mobile.core.platform.UrlOpener
 import com.fancyfinery.mobile.core.theme.BrandWordmark
 import com.fancyfinery.mobile.features.auth.AuthMode
 import com.fancyfinery.mobile.features.auth.OnAuthSuccess
 import com.fancyfinery.mobile.features.auth.presentation.components.AuthTextField
 import com.fancyfinery.mobile.features.auth.presentation.components.PasswordTextField
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -61,7 +59,6 @@ fun AuthScreen(
     viewModel: AuthViewModel = koinViewModel { org.koin.core.parameter.parametersOf(initialMode) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val urlOpener = koinInject<UrlOpener>()
     val isRegister = state.mode == AuthMode.REGISTER
 
     Column(
@@ -189,47 +186,46 @@ fun AuthScreen(
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        // Google is offered only where the native sheet actually works. On
+        // iOS and the desktop preview the button is absent rather than present
+        // and broken — an option that fails on tap is worse than no option.
+        if (viewModel.isGoogleAvailable) {
+            Spacer(Modifier.height(8.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        ) {
-            HorizontalDivider(modifier = Modifier.weight(1f))
-            Text(
-                text = "  or  ",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            HorizontalDivider(modifier = Modifier.weight(1f))
-        }
-
-        /**
-         * Google.
-         *
-         * The consent screen opens in a browser tab rather than a WebView —
-         * Google refuses OAuth from embedded WebViews outright, so this is the
-         * only flow that works at all, as well as the one that lets a customer
-         * reuse a session they already have.
-         */
-        OutlinedButton(
-            onClick = {
-                viewModel.onGoogleSignIn(
-                    callbackUrl = GOOGLE_CALLBACK,
-                    onOpenUrl = urlOpener::open,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            ) {
+                HorizontalDivider(modifier = Modifier.weight(1f))
+                Text(
+                    text = "  or  ",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-            },
-            enabled = !state.isGoogleLoading && !state.isLoading,
-            shape = RoundedCornerShape(2.dp),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.onSurface,
-            ),
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-        ) {
-            if (state.isGoogleLoading) {
-                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
-            } else {
-                Text("Continue with Google")
+                HorizontalDivider(modifier = Modifier.weight(1f))
+            }
+
+            /**
+             * Google, in the app.
+             *
+             * Credential Manager shows the account sheet over this screen and
+             * returns an ID token the server exchanges for a session. Nothing
+             * opens a browser and nothing leaves the app.
+             */
+            OutlinedButton(
+                onClick = { viewModel.onGoogleSignIn(onAuthSuccess) },
+                enabled = !state.isGoogleLoading && !state.isLoading,
+                shape = RoundedCornerShape(2.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+            ) {
+                if (state.isGoogleLoading) {
+                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
+                } else {
+                    Text("Continue with Google")
+                }
             }
         }
 
@@ -255,13 +251,3 @@ fun AuthScreen(
         }
     }
 }
-
-/**
- * Where Google returns the customer after consent.
- *
- * Points at the website, not at the app. The server completes the OAuth
- * exchange and establishes the session there; the app picks the session up
- * afterwards. Pointing this at a custom scheme would need that scheme
- * registered as a trusted origin server-side first.
- */
-private const val GOOGLE_CALLBACK = "/"

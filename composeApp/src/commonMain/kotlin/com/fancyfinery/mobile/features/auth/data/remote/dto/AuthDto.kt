@@ -47,6 +47,24 @@ data class ForgotPasswordRequest(
     val redirectTo: String,
 )
 
+/**
+ * Native Google sign-in.
+ *
+ * `idToken` is a nested object, not a bare string — that is the shape Better
+ * Auth's `/sign-in/social` declares, and flattening it makes the field be
+ * ignored and the call fall back to a redirect.
+ */
+@Serializable
+data class GoogleIdTokenPayload(val token: String)
+
+@Serializable
+data class GoogleIdTokenSignInRequest(
+    val provider: String = "google",
+    val idToken: GoogleIdTokenPayload,
+    /** Keeps the server from answering with a redirect we cannot follow. */
+    val disableRedirect: Boolean = true,
+)
+
 @Serializable
 data class SocialSignInRequest(
     val provider: String,

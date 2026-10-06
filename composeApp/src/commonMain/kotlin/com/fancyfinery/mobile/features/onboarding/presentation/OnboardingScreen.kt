@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.fancyfinery.mobile.core.theme.BrandWordmark
 import com.fancyfinery.mobile.features.onboarding.OnOnboardingComplete
 import com.fancyfinery.mobile.features.onboarding.defaultOnboardingPages
 import com.fancyfinery.mobile.features.onboarding.presentation.components.OnboardingPageContent
@@ -48,6 +49,15 @@ fun OnboardingScreen(onComplete: OnOnboardingComplete) {
                     .statusBarsPadding()
                     .navigationBarsPadding(),
                 content = {
+                    // The house mark, so the first screen of the app is
+                    // unmistakably Fancy Finery rather than a generic carousel.
+                    BrandWordmark(
+                        tagline = "ELEGANCE REDEFINED",
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 20.dp),
+                    )
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -99,7 +109,7 @@ fun OnboardingScreen(onComplete: OnOnboardingComplete) {
                         content = {
                             Text(
                                 text = when {
-                                    state.isLastPage -> "Get Started"; else -> "Next"
+                                    state.isLastPage -> "Enter the house"; else -> "Next"
                                 }
                             )
                         },

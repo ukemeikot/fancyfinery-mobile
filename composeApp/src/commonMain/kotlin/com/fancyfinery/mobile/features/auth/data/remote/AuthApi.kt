@@ -6,6 +6,8 @@ import com.fancyfinery.mobile.core.network.NetworkConfig
 import com.fancyfinery.mobile.features.auth.data.remote.dto.AuthResponse
 import com.fancyfinery.mobile.features.auth.data.remote.dto.BetterAuthError
 import com.fancyfinery.mobile.features.auth.data.remote.dto.ForgotPasswordRequest
+import com.fancyfinery.mobile.features.auth.data.remote.dto.GoogleIdTokenPayload
+import com.fancyfinery.mobile.features.auth.data.remote.dto.GoogleIdTokenSignInRequest
 import com.fancyfinery.mobile.features.auth.data.remote.dto.MagicLinkRequest
 import com.fancyfinery.mobile.features.auth.data.remote.dto.SessionResponse
 import com.fancyfinery.mobile.features.auth.data.remote.dto.SignInRequest
@@ -81,7 +83,22 @@ class AuthApi(
     }
 
     /**
-     * Begin a Google sign-in and return the URL to open in a browser tab.
+     * Exchange a Google ID token for a session.
+     *
+     * The native path. Better Auth verifies the token's signature against
+     * Google and issues a session for the matching account — the same account
+     * the website's Google button produces, because both name the same OAuth
+     * client. The bearer token comes back in `set-auth-token` exactly as it
+     * does for an email sign-in.
+     */
+    suspend fun signInWithGoogleIdToken(idToken: String): AuthResult =
+        authenticating(
+            "/sign-in/social",
+            GoogleIdTokenSignInRequest(idToken = GoogleIdTokenPayload(token = idToken)),
+        )
+
+    /**
+     * Begin a browser-based Google sign-in and return the URL to open.
      *
      * Nothing is signed in yet at this point: the response is only where to send
      * the customer. The session is established when Google redirects back to the

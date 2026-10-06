@@ -1,6 +1,7 @@
 package com.fancyfinery.mobile.features.auth.data
 
 import com.fancyfinery.mobile.core.network.NetworkConfig
+import com.fancyfinery.mobile.core.platform.GoogleSignIn
 import com.fancyfinery.mobile.core.session.SessionStore
 import com.fancyfinery.mobile.features.auth.data.local.UserDao
 import com.fancyfinery.mobile.features.auth.data.local.UserEntity
@@ -24,6 +25,7 @@ class AuthRepository(
     private val api: AuthApi,
     private val session: SessionStore,
     private val userDao: UserDao,
+    private val google: GoogleSignIn,
 ) {
 
     /**
@@ -70,8 +72,22 @@ class AuthRepository(
     suspend fun resendVerification(email: String) =
         api.resendVerification(email = email.trim(), callbackUrl = NetworkConfig.BASE_URL)
 
-    /** Where to send the customer to sign in with Google. */
-    suspend fun googleAuthUrl(callbackUrl: String): String = api.googleAuthUrl(callbackUrl)
+    /**
+     * Sign in with Google, natively.
+     *
+     * The account sheet is shown by the platform, over the app; the ID token it
+     * returns is exchanged server-side for a session. Returns null when the
+     * customer dismisses the sheet, which is a cancellation rather than a
+     * failure and must not be reported as one.
+     */
+    suspend fun signInWithGoogle(): User? {
+        val idToken = google.idToken() ?: return null
+        val result = api.signInWithGoogleIdToken(idToken)
+        return result.token?.let { token -> persist(token, result.user) }
+    }
+
+    /** Whether this build can show the native sheet at all. */
+    val isGoogleAvailable: Boolean get() = google.isAvailable
 
     /**
      * Adopt a token obtained outside the normal flow — currently the Google

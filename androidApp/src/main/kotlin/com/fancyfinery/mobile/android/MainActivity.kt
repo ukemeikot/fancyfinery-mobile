@@ -11,7 +11,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            App(applicationContext)
+            // The ACTIVITY, not applicationContext: Credential Manager presents
+            // the Google account sheet and needs an Activity to present from.
+            // The database and preference factories take applicationContext off
+            // it themselves, so nothing long-lived retains this.
+            App(this)
         }
     }
 }

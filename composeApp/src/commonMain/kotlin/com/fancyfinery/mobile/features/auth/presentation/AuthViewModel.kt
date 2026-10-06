@@ -3,6 +3,7 @@ package com.fancyfinery.mobile.features.auth.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fancyfinery.mobile.core.network.ApiException
+import com.fancyfinery.mobile.core.platform.GoogleSignInException
 import com.fancyfinery.mobile.features.auth.AuthMode
 import com.fancyfinery.mobile.features.auth.OnAuthSuccess
 import com.fancyfinery.mobile.features.auth.data.AuthRepository
@@ -144,44 +145,35 @@ class AuthViewModel(
         }
     }
 
+    /** Whether to draw the Google button at all. */
+    val isGoogleAvailable: Boolean get() = repository.isGoogleAvailable
+
     /**
-     * Start Google sign-in.
+     * Sign in with Google, without leaving the app.
      *
-     * Returns the URL to open in a browser tab through [onOpenUrl]; the session
-     * is established when Google redirects back to the server. Nothing is
-     * signed in at this point.
+     * A dismissed sheet returns null and is treated as nothing having happened
+     * — no error, no state change. Anyone who opens the chooser and changes
+     * their mind has not encountered a problem.
      */
-    fun onGoogleSignIn(callbackUrl: String, onOpenUrl: (String) -> Unit) {
+    fun onGoogleSignIn(onSuccess: OnAuthSuccess) {
         viewModelScope.launch {
             _state.update { it.copy(isGoogleLoading = true, generalError = null) }
-            runCatching { repository.googleAuthUrl(callbackUrl) }
-                .onSuccess { url ->
-                    _state.update { it.copy(isGoogleLoading = false) }
-                    onOpenUrl(url)
-                }
-                .onFailure { e ->
-                    _state.update { it.copy(isGoogleLoading = false).withError(e) }
-                }
-        }
-    }
-
-    /** Adopt a token handed back by the Google redirect. */
-    fun onGoogleToken(token: String, onSuccess: OnAuthSuccess) {
-        viewModelScope.launch {
-            _state.update { it.copy(isGoogleLoading = true) }
-            runCatching { repository.adoptToken(token) }
+            runCatching { repository.signInWithGoogle() }
                 .onSuccess { user ->
                     _state.update { it.copy(isGoogleLoading = false) }
-                    if (user != null) {
-                        onSuccess()
-                    } else {
-                        _state.update {
-                            it.copy(generalError = "That sign-in didn't complete. Please try again.")
-                        }
-                    }
+                    if (user != null) onSuccess()
                 }
                 .onFailure { e ->
-                    _state.update { it.copy(isGoogleLoading = false).withError(e) }
+                    _state.update {
+                        it.copy(
+                            isGoogleLoading = false,
+                            generalError = when (e) {
+                                is GoogleSignInException -> e.message
+                                is ApiException -> e.message
+                                else -> "Could not sign you in with Google."
+                            },
+                        )
+                    }
                 }
         }
     }

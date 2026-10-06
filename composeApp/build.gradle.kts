@@ -108,6 +108,10 @@ kotlin {
             implementation(libs.room.sqlite)
             // Opens the provider's hosted payment page in a Custom Tab.
             implementation(libs.androidx.browser)
+            // Native Google sign-in, in-app.
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.play.services)
+            implementation(libs.google.id)
         }
 
         iosMain.dependencies {

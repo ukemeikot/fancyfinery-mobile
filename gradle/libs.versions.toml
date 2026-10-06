@@ -84,6 +84,13 @@ kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",
 
 # Android platform
 core = "androidx.core:core-ktx:1.18.0"
+# Native Google sign-in. Credential Manager shows the account sheet IN the app
+# rather than handing the customer to a browser; `googleid` carries the
+# GetGoogleIdOption request and the id-token response type.
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version = "1.6.0" }
+androidx-credentials-play-services = { group = "androidx.credentials", name = "credentials-play-services-auth", version = "1.6.0" }
+google-id = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version = "1.1.1" }
+
 # Chrome Custom Tabs — hosts the Paystack/Stripe payment page in-app. A WebView
 # would work, but card forms in a WebView are exactly what payment providers and
 # app-store reviewers object to; a Custom Tab keeps the real browser's address
