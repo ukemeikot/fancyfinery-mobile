@@ -17,7 +17,7 @@ room = "3.0.0-alpha03"
 sqlite = "2.7.0-alpha03"
 
 # DI
-koin = "4.1.0"
+koin = "4.2.2"
 
 # Kotlinx
 coroutines = "1.10.2"
