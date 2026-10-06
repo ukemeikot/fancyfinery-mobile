@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import com.fancyfinery.mobile.core.ui.tabScaffoldInsets
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -52,9 +53,17 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun CatalogScreen(
     onProductClick: (slug: String) -> Unit,
+    initialCategorySlug: String? = null,
     viewModel: CatalogViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    // Applied once, when arriving from a collection tile on the home screen.
+    // Keyed on the slug so returning to an unfiltered Shop tab does not
+    // re-apply the last category.
+    LaunchedEffect(initialCategorySlug) {
+        if (initialCategorySlug != null) viewModel.onCategorySelected(initialCategorySlug)
+    }
     val gridState = rememberLazyGridState()
 
     /**
@@ -76,6 +85,7 @@ fun CatalogScreen(
     }
 
     Scaffold(
+        contentWindowInsets = tabScaffoldInsets(),
         topBar = {
             TopAppBar(
                 title = { BrandWordmark(tagline = "ELEGANCE REDEFINED") },
