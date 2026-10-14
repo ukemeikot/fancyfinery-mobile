@@ -13,8 +13,8 @@ retrostash = "0.0.7"
 coil = "3.3.0"
 
 # Database / Storage
-room = "3.0.0-alpha03"
-sqlite = "2.7.0-alpha03"
+room = "3.1.0-alpha01"
+sqlite = "2.8.0-alpha01"
 
 # DI
 koin = "4.1.0"
@@ -83,7 +83,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version = "0.7.1" }
 
 # Android platform
-core = "androidx.core:core-ktx:1.18.0"
+core = "androidx.core:core-ktx:1.19.1"
 # Native Google sign-in. Credential Manager shows the account sheet IN the app
 # rather than handing the customer to a browser; `googleid` carries the
 # GetGoogleIdOption request and the id-token response type.
@@ -95,7 +95,7 @@ google-id = { group = "com.google.android.libraries.identity.googleid", name = "
 # would work, but card forms in a WebView are exactly what payment providers and
 # app-store reviewers object to; a Custom Tab keeps the real browser's address
 # bar and TLS indicator in front of the customer.
-androidx-browser = { group = "androidx.browser", name = "browser", version = "1.9.0" }
+androidx-browser = { group = "androidx.browser", name = "browser", version = "1.10.0" }
 
 # Testing
 junit = { group = "junit", name = "junit", version = "4.13.2" }
